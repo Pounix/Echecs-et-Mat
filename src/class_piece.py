@@ -20,5 +20,10 @@ class Piece:
     def __str__(self):
         print (self.valeur,' ',self.couleur,', placé en ',self.colonne, self.ligne)
     
+    @property
+    def fichier(self):
+        """Returns the file name of the picture of one piece
+        """
+        return f"images\\{self.valeur.capitalize()}_{self.couleur.lower()}.png"
         
         
