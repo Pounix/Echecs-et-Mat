@@ -1,41 +1,42 @@
 # -*- coding: utf-8 -*-
+import time
 import tkinter
-from tkinter import Label, Tk, Pack, Frame, Canvas
+from tkinter import Button, Label, Tk, Pack, Frame, Canvas
 from tkinter.constants import NW
 from src.class_echiquier import Echiquier
 from src.class_piece import Piece
 from PIL import Image, ImageTk
 
-fenetre = Tk()
-fenetre.geometry("825x834")
-fenetre.iconbitmap('F:\\OneDrive\\01 - JMO conseil\\30-Logos\\JMO conseil\\JMOfavicon.ico')
-fenetre.title("JMO conseil")
-frame = Frame(fenetre)
-frame.pack()
-# fenetre['bg']='blue'
+def choix_piece(event):
+    x, y = event.x, event.y
+    print('{}, {}'.format(x, y))
+    colonne, ligne = ech.ma_case(x,y)
+    ech.echiquier.append(Piece(couleur="cursor", valeur="Select", ligne='5', colonne='A',type='cursor'))  # fichier image = valeur_couleur
+    img = ech.trace().resize((800, 800))
+    photo=ImageTk.PhotoImage(img)
+    canvas=Canvas(frame,width=width,height=height,bg="#4065A4", bd=0,highlightthickness=0)
+    canvas.create_image(width/2, height/2, image=photo)
+    canvas.pack()
+    frame.pack(pady=10)
 
-champ_label = Label(fenetre, text="Les échecs c'est la vie !")
-champ_label.pack()
-
+window = Tk()
+window.title("JMO conseil")
+window.geometry("825x825")
+window.minsize(480, 360)
+window.iconbitmap("F:\\OneDrive\\01 - JMO conseil\\30-Logos\\JMO conseil\\JMOfavicon.ico")
+window.config(background='#41B77F')
+frame = Frame(window)
 ech = Echiquier()
 ech.new_game("blanc")
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='1', colonne="A",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='2', colonne="B",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='3', colonne="C",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Possible", ligne='4', colonne="D",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='5', colonne="E",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='6', colonne="F",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='7', colonne="G",type='cursor'))
-ech.echiquier.append(Piece("cursor", valeur="Select", ligne='8', colonne="H",type='cursor'))
+width=800
+height=800
 
-#ech.cleanCursor()
+img = ech.trace().resize((width, height))
+photo=ImageTk.PhotoImage(img)
+canvas=Canvas(frame,width=width,height=height,bg="#4065A4", bd=0,highlightthickness=0)
+canvas.create_image(width/2, height/2, image=photo)
+canvas.pack()
+frame.pack(pady=10)
 
-image1 = ech.trace().resize((800, 800))
-test = ImageTk.PhotoImage(image1)
-label1 = tkinter.Label(fenetre, image=test)
-label1.place(x=10, y=20)
-
-
-
-
-fenetre.mainloop()
+window.bind("<Button 1>",choix_piece)
+window.mainloop()
