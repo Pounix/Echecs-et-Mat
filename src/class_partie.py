@@ -15,5 +15,6 @@ class Partie:
         self.echiquier=echiquier
         self.liste_de_coups=liste_de_coups
         
-        
+
+            
         

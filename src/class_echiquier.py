@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from sys import _current_frames
 from PIL import Image
-from src.class_piece import Piece
+from class_piece import Piece
+from moves import newCase
 
 
 class Echiquier:
@@ -31,9 +33,9 @@ class Echiquier:
             self.pieces[p[1]+ligne]=Piece(couleur=couleur,valeur=p[0],type=True,case_précédente=p[1]+ligne)
 
         # maintenant on place les pions
-        ligne = '2' if ligne=='1' else '7'
-        for c in "ABCDEFGH":
-            self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
+        # ligne = '2' if ligne=='1' else '7'
+        # for c in "ABCDEFGH":
+        #     self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
         return
 
     def trace(self):
@@ -64,20 +66,47 @@ class Echiquier:
     def ma_case(self, x, y):
         return ''.join(chr(64 + int(min(max((x - 60) * 8 / 680 + 1, 1), 8)))+chr(57 - int(min(max((y - 60) * 8 / 680 + 1, 1), 8))))
 
-    # def coups_jouables(self, indice_piece: int):
-    #     """Retourne les coups jouables de la pièce indice_piece
+    def coups_jouables(self, case: str):
+        """retourne un dictionnaire dont :
+                la clef est chaque coup jouable
+                la valeur chaque nouvelle liste de pièces correspondante, si ce coup était joué
 
-    #     Args:
-    #         echiquier (Echiquier): [description]
-    #         piece (int): indice de la piece à analyser dans l'échiquier
-    #     """
-    #     liste_coups = []
-    #     p = self.echiquier[indice_piece]
-
-    #     # ROI ------------------------------------------------------------------------------------------------
-    #     if p.valeur == "Roi":
-    #         for delta_col in (-1, 0, 1):
-    #             for delta_lig in (-1, 0, 1):
+        Args:
+            case (str): case où se situe la pièce à analyser 
+        """
+        liste_coups = {}
+        # pour éliminer une case ne contenant pas une pièce correcte
+        try:
+            if len(case)!=2:
+                case='XX'
+            val=self.pieces[case]
+        except KeyError:
+            return liste_coups
+        
+        valeur=self.pieces[case].valeur
+        couleur=self.pieces[case].couleur
+        # breakpoint()
+        new_pieces={}
+        # ROI ------------------------------------------------------------------------------------------------
+        if valeur == "Roi":
+            for delta_col in (-1, 0, 1):
+                for delta_lig in (-1, 0, 1):
+                    c=newCase(case,dir_nord=delta_lig,dir_ouest=delta_col)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+        return new_pieces
     #                 new_coup = newCase(p.case, delta_col, delta_lig)
     #                 if new_coup != "" and new_coup not in liste_coups:
     #                     liste_coups.append(new_coup)
