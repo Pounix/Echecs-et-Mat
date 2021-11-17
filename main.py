@@ -11,7 +11,6 @@ from PIL import Image, ImageTk
 
               
 class Plateau(Tk):
-    coup_choisi=''
     ech_coups_possibles={}
     
     def __init__(self):
@@ -33,24 +32,25 @@ class Plateau(Tk):
         # Trouver s'il y a une pièce sur cette case...
         p = self.ech.pieces[ca] if ca in self.ech.pieces.keys() else ''
         cur = self.ech.pieces[ca+'p'] if (ca+'p') in self.ech.pieces.keys() else ''
-        if p!='':
-            # breakpoint()
-            self.ech.cleanCursor()
-            self.ech_coups_possibles=self.ech.coups_jouables(ca)
-            v = 'Bloqué' if self.ech_coups_possibles=={} else 'Select'
-            self.ech.pieces[ca+'c']=Piece(couleur="cursor", valeur=v, type=False,case_précédente=ca) # fichier image = valeur_couleur
-            v='Possible'
-            for c in self.ech_coups_possibles.keys():
-                self.ech.pieces[c+'p']=Piece(couleur="cursor", valeur=v, type=False,case_précédente=c)
-            self.image = self.ech.trace().resize((self.width, self.height))
-            self.photo = ImageTk.PhotoImage(self.image)
-            self.canvas.create_image((0, 0), anchor="nw", image=self.photo)
-        elif cur!='':
+ 
+        if cur!='':
             self.ech.pieces=self.ech_coups_possibles[ca]
             self.ech.cleanCursor()
             self.image = self.ech.trace().resize((self.width, self.height))
             self.photo = ImageTk.PhotoImage(self.image)
             self.canvas.create_image((0, 0), anchor="nw", image=self.photo)
+        elif p!='':
+            self.ech.cleanCursor()
+            self.ech_coups_possibles=self.ech.coups_jouables(ca)
+            v = 'Bloqué' if self.ech_coups_possibles=={} else 'Select'
+            self.ech.pieces[ca+'c']=Piece(couleur="cursor", valeur=v, type=False) # fichier image = valeur_couleur
+            v='Possible'
+            for c in self.ech_coups_possibles.keys():
+                self.ech.pieces[c+'p']=Piece(couleur="cursor", valeur=v, type=False,case_précédente=ca)
+            self.image = self.ech.trace().resize((self.width, self.height))
+            self.photo = ImageTk.PhotoImage(self.image)
+            self.canvas.create_image((0, 0), anchor="nw", image=self.photo)
+
    
 if __name__ == "__main__":
     app = Plateau()

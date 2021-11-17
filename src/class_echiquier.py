@@ -33,9 +33,9 @@ class Echiquier:
             self.pieces[p[1]+ligne]=Piece(couleur=couleur,valeur=p[0],type=True,case_précédente=p[1]+ligne)
 
         # maintenant on place les pions
-        # ligne = '2' if ligne=='1' else '7'
-        # for c in "ABCDEFGH":
-        #     self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
+        ligne = '2' if ligne=='1' else '7'
+        for c in "ABCDEFGH":
+            self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
         return
 
     def trace(self):
@@ -85,9 +85,10 @@ class Echiquier:
         
         valeur=self.pieces[case].valeur
         couleur=self.pieces[case].couleur
+        case_précédente=self.pieces[case].case_précédente
         # breakpoint()
         new_pieces={}
-        # ROI ------------------------------------------------------------------------------------------------
+    # ROI ------------------------------------------------------------------------------------------------
         if valeur == "Roi":
             for delta_col in (-1, 0, 1):
                 for delta_lig in (-1, 0, 1):
@@ -102,93 +103,209 @@ class Echiquier:
                         elif  couleur!=self.pieces[c].couleur:
                             #on peut prendre une pièce adverse
                             # breakpoint()
-                            new_ech=self.pieces                            
+                            new_ech=self.pieces.copy()                            
                             new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
                             del new_ech[case]
                             new_pieces[c]=new_ech
+        
+    # DAME ------------------------------------------------------------------------------------------------
+        if valeur == "Dame":
+            for delta_col in (-1, 0, 1):
+                for delta_lig in (-1, 0, 1):
+                    for i in range(1,8):
+                        c=newCase(case,dir_nord=delta_lig*i,dir_ouest=delta_col*i)
+                        if not c=='':
+                            if c not in self.pieces.keys():
+                                #la case est libre on peut jouer
+                                new_ech=self.pieces.copy()
+                                new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                                del new_ech[case]
+                                new_pieces[c]=new_ech
+                            elif  couleur!=self.pieces[c].couleur:
+                                #on peut prendre une pièce adverse
+                                # breakpoint()
+                                new_ech=self.pieces.copy()                            
+                                new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                                del new_ech[case]
+                                new_pieces[c]=new_ech
+                                break
+                            else:
+                                break
+                        else:
+                                break
+
+    # TOUR ------------------------------------------------------------------------------------------------
+        if valeur == "Tour":
+            delta_lig=0
+            for delta_col in (-1, 1):
+                for i in range(1,8):
+                    c=newCase(case,dir_nord=delta_lig*i,dir_ouest=delta_col*i)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces.copy()                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                            break
+                        else:
+                            break
+                    else:
+                            break
+            delta_col=0            
+            for delta_lig in (-1, 1):
+                for i in range(1,8):
+                    c=newCase(case,dir_nord=delta_lig*i,dir_ouest=delta_col*i)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces.copy()                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                            break
+                        else:
+                            break
+                    else:
+                            break
+    # FOU ------------------------------------------------------------------------------------------------
+        if valeur == "Fou":
+            for delta_col in (-1, 1):
+                delta_lig=delta_col
+                for i in range(1,8):
+                    c=newCase(case,dir_nord=delta_lig*i,dir_ouest=delta_col*i)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces.copy()                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                            break
+                        else:
+                            break
+                    else:
+                            break            
+            for delta_lig in (-1, 1):
+                delta_col=-delta_lig
+                for i in range(1,8):
+                    c=newCase(case,dir_nord=delta_lig*i,dir_ouest=delta_col*i)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces.copy()                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                            break
+                        else:
+                            break
+                    else:
+                            break
+    # CAVALIER ------------------------------------------------------------------------------------------------
+        if valeur == "Cavalier":
+            for delta_lig in (-2, 2):
+                for delta_col in (-1, 1):
+                    c=newCase(case,dir_nord=delta_lig,dir_ouest=delta_col)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces.copy()                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+            for delta_lig in (-1, 1):
+                for delta_col in (-2, 2):
+                    c=newCase(case,dir_nord=delta_lig,dir_ouest=delta_col)
+                    if not c=='':
+                        if c not in self.pieces.keys():
+                            #la case est libre on peut jouer
+                            new_ech=self.pieces.copy()
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+                        elif  couleur!=self.pieces[c].couleur:
+                            #on peut prendre une pièce adverse
+                            # breakpoint()
+                            new_ech=self.pieces.copy()                            
+                            new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                            del new_ech[case]
+                            new_pieces[c]=new_ech
+    # PION ------------------------------------------------------------------------------------------------
+        if valeur == "Pion":
+            # mouvement pion classique
+            delta_lig =1 if couleur=='blanc'else -1
+            delta_col=0
+            c=newCase(case,dir_nord=delta_lig,dir_ouest=delta_col)
+            if not c=='':
+                if c not in self.pieces.keys():
+                    #la case est libre on peut jouer
+                    new_ech=self.pieces.copy()
+                    new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                    del new_ech[case]
+                    new_pieces[c]=new_ech
+                    
+                    # mouvement pion à l'ouverture
+                    if case==case_précédente:   # donc si le pion n'a pas encore bougé
+                        delta_lig =2 if couleur=='blanc'else -2
+                        delta_col=0
+                        c=newCase(case,dir_nord=delta_lig,dir_ouest=delta_col)
+                        if not c=='':
+                            if c not in self.pieces.keys():
+                                #la case est libre on peut jouer
+                                new_ech=self.pieces.copy()
+                                new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                                del new_ech[case]
+                                new_pieces[c]=new_ech
+            
+            # mouvement pion pour la prise
+            delta_lig =1 if couleur=='blanc'else -1
+            for delta_col in(-1,1):
+                c=newCase(case,dir_nord=delta_lig,dir_ouest=delta_col)
+                if not c=='':
+                    if  c in self.pieces.keys() and couleur!=self.pieces[c].couleur:
+                        #on peut prendre une pièce adverse
+                        # breakpoint()
+                        new_ech=self.pieces.copy()                            
+                        new_ech[c]=Piece(couleur=couleur,valeur=valeur,type=True,case_précédente=case)
+                        del new_ech[case]
+                        new_pieces[c]=new_ech         
         return new_pieces
-    #                 new_coup = newCase(p.case, delta_col, delta_lig)
-    #                 if new_coup != "" and new_coup not in liste_coups:
-    #                     liste_coups.append(new_coup)
-    #         if (self.case_précédente == "") and (
-    #             (self.couleur == "blanc" and self.case == "E1")
-    #             or (self.couleur == "noir" and self.case == "E8")
-    #         ):
-    #             # condition nécessaire mais pas suffisante pour proposer un roque
-    #             new_coup = newCase(self.case, 2, 0)
-    #             liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, -2, 0)
-    #             liste_coups.append(new_coup)
-    #     # DAME ------------------------------------------------------------------------------------------------
-    #     if p.valeur == "Dame":
-    #         for delta in range(-8, 8):
-    #             new_coup = newCase(self.case, delta, 0)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, 0, delta)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, delta, delta)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, delta, -delta)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #         # TOUR ------------------------------------------------------------------------------------------------
-    #     if p.valeur == "Tour":
-    #         for delta in range(-8, 8):
-    #             new_coup = newCase(self.case, delta, 0)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, 0, delta)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #     # FOU ------------------------------------------------------------------------------------------------
-    #     if p.valeur == "Fou":
-    #         for delta in range(-8, 8):
-    #             new_coup = newCase(self.case, delta, delta)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, delta, -delta)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #     # CAVALIER ------------------------------------------------------------------------------------------------
-    #     if p.valeur == "Cavalier":
-    #         for delta_lig in (-2, 2):
-    #             for delta_col in (-1, 1):
-    #                 new_coup = newCase(self.case, delta_col, delta_lig)
-    #                 if new_coup != "" and new_coup not in liste_coups:
-    #                     liste_coups.append(new_coup)
-    #                 new_coup = newCase(self.case, delta_lig, delta_col)
-    #                 if new_coup != "" and new_coup not in liste_coups:
-    #                     liste_coups.append(new_coup)
-    #         # PION ------------------------------------------------------------------------------------------------
-    #     if p.valeur == "Pion":
-    #         if p.couleur == "blanc":
-    #             new_coup = newCase(self.case, 0, 1)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, 1, 1)  # Prise Piece
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, -1, 1)  # Prise Piece
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             if self.ligne == "2":
-    #                 new_coup = newCase(self.case, 0, 2)
-    #                 if new_coup != "" and new_coup not in liste_coups:
-    #                     liste_coups.append(new_coup)
-    #         else:
-    #             new_coup = newCase(self.case, 0, -1)
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, 1, -1)  # Prise Piece
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             new_coup = newCase(self.case, -1, -1)  # Prise Piece
-    #             if new_coup != "" and new_coup not in liste_coups:
-    #                 liste_coups.append(new_coup)
-    #             if self.ligne == "7":
-    #                 new_coup = newCase(self.case, 0, -2)
-    #                 if new_coup != "" and new_coup not in liste_coups:
-    #                     liste_coups.append(new_coup)
+    
+    def _sous_coups_jouables(self, case: str):
+        pass
