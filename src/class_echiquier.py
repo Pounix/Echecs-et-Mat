@@ -30,11 +30,11 @@ class Echiquier:
         for p in posinit:
             self.pieces[p[1]+ligne]=Piece(couleur=couleur,valeur=p[0],type=True,case_précédente=p[1]+ligne)
 
-        # # maintenant on place les pions
-        # ligne = '2' if ligne=='1' else '7'
-        # for c in "ABCDEFGH":
-        #     self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
-        # return
+        # maintenant on place les pions
+        ligne = '2' if ligne=='1' else '7'
+        for c in "ABCDEFGH":
+            self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
+        return
 
     def trace(self):
         """Trace le plateau de jeu

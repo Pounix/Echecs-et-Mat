@@ -19,15 +19,23 @@ class Plateau(Tk):
         self.x = self.y = 0
         self.width=800
         self.height=800
+        self.geometry(str(self.width)+'x'+str(self.height))
+        self.title('JMO conseil - entrainement aux échecs')
+        self.iconbitmap(r"F:\OneDrive\01 - JMO conseil\30-Logos\JMO conseil\JMOfavicon.ico")
+        frame=Frame(self, background='#41B77F')
         self.canvas = Canvas(self, width=self.width, height=self.height, cursor="cross")
-        self.canvas.pack(side="top", fill="both", expand=True)
+        self.canvas.pack(side="top", fill="both")
         self.ech = Echiquier()
         self.ech.new_game()
         self.image = self.ech.trace().resize((self.width, self.height))
         self.photo = ImageTk.PhotoImage(self.image)
         self.canvas.create_image((0, 0), anchor="nw", image=self.photo)
+        # self.bouton_newgame = Button(self, text="New Game", font=("Courrier", 25), bg='#41B77F')
         self.bind('<Button-1>', self.update)
 
+    def initial(self,event):
+        self.ech.new_game()
+        
     def update(self, event):
         ca = self.ech.ma_case(event.x,event.y)
         # Trouver s'il y a une pièce sur cette case...

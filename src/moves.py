@@ -313,25 +313,17 @@ def elimine_coups_provoquant_echec(liste_coups, couleur_attaquant):
     """
     
     # trouver le Roi de même couleur que la pièce de case_départ
-    couleur_roi = 'noir' if couleur_attaquant=='blanc' else 'blanc'
     position_du_roi='?'
-    value=''
-    flg=False  # False = pas de Roi détecté
-    for key in liste_coups:
-        echiquier=liste_coups[key]
-        for key2 in echiquier:
-            piece=echiquier[key2]
-            if piece.couleur==couleur_roi and piece.valeur=='Roi':
+    lc=liste_coups.copy()
+    flg=False
+    for key in lc:
+        pieces=lc[key]
+        for key2 in pieces:
+            piece=pieces[key2]
+            if piece.couleur!=couleur_attaquant and piece.valeur=='Roi':
                 position_du_roi=key2
-                flg=True
+                flg=True        # on a trouvé le Roi !!!
                 break
-        if flg:
-            break
-    print('=====> Roi ',couleur_roi,' en ',position_du_roi,'à anlyser ')
-    if flg:  # si pas de roi , pas de risque d'échec...et toc ! mais bizarre qu'il n'y ait pas de roi...
-        lc=liste_coups.copy()
-        for key in lc:
-            if attaquable_par(pieces=lc[key],case=position_du_roi,couleur_attaquant=couleur_attaquant):
-                print ('$$$$$$ coup ',key,' retiré')
+        if flg and attaquable_par(pieces=pieces,case=position_du_roi,couleur_attaquant=couleur_attaquant):
                 del liste_coups[key]
     return liste_coups
