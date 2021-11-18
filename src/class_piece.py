@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 
 class Piece:
-    """Une Pièce"""
 
     def __init__(
+
         self,
         couleur: str = "blanc",
         valeur: str = "Pion",
-        type: bool = True,                   # True= c'est une piece , False = c'est autrechose (un curseur, une marque, etc...)
-        case_précédente: str = '',           # '' = la pièce n'a pas encore bougé , sinon 'A2' ou autre...
+        type: bool = True,
+        case_précédente: str = '',
     ):
-        """Initialise une Pièce
+        """Initialise une Pièce qui est une liste de 4 arguments
 
         Args:
-            couleur (str, optional): blanc / noir                      . Defaults to 'blanc'.
-            valeur (str, optional): pion,tour,cavalier,fou,dame,roi    . Defaults to 'pion'.
-            ligne (str, optional): 1 à 8                               . Defaults to '2'.
-            colonne (str, optional): A à H                             . Defaults to 'A'.
-            type (str, optionnal) : text pour différencier les pieces des autres éventuelles marques (cursor, etc...)
+            couleur (str, optional): 'blanc' ou 'noir''
+            valeur (str, optional): 'Dame', 'Roi', Pion',...'
+            type (bool, optional): True=pièce    False=cursor ou autre
+            case_précédente (str, optional): la case occupée avant le dernier mouvement de cette pièce
         """
         self.couleur = couleur
         self.valeur = valeur
@@ -26,9 +25,9 @@ class Piece:
 
     def __str__(self):
         if self.type:
-            return f"Piece   : {self.valeur} {self.couleur} était placé en {self.case_précédente}"
+            return f"Piece   : {self.valeur} {self.couleur} qui vient de {self.case_précédente}"
         else:
-            return f"Curseur : {self.valeur} {self.couleur} était placé en {self.case_précédente}"
+            return f"Curseur : {self.valeur} {self.couleur} qui vient de {self.case_précédente}"
         
     @property
     def fichier(self):

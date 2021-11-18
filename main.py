@@ -3,6 +3,7 @@ import sys
 sys.path.append(r'F:\OneDrive\Coding\Python\Python3\EchecEtMat\src')
 
 import tkinter
+from src.moves import *
 from tkinter import Button, Label, Tk, Pack, Frame, Canvas
 from tkinter.constants import NW
 from src.class_echiquier import Echiquier
@@ -31,17 +32,20 @@ class Plateau(Tk):
         ca = self.ech.ma_case(event.x,event.y)
         # Trouver s'il y a une pièce sur cette case...
         p = self.ech.pieces[ca] if ca in self.ech.pieces.keys() else ''
-        cur = self.ech.pieces[ca+'p'] if (ca+'p') in self.ech.pieces.keys() else ''
+        cur = self.ech.pieces[ca+'p']  if (ca+'p') in self.ech.pieces.keys() else ''
  
-        if cur!='':
+        if cur!='': # on a clické sur un cursor
             self.ech.pieces=self.ech_coups_possibles[ca]
             self.ech.cleanCursor()
             self.image = self.ech.trace().resize((self.width, self.height))
             self.photo = ImageTk.PhotoImage(self.image)
             self.canvas.create_image((0, 0), anchor="nw", image=self.photo)
-        elif p!='':
+        elif p!='': # on a clické sur une pièce
+            couleur_attaquant='noir' if p.couleur=='blanc' else 'blanc'
             self.ech.cleanCursor()
-            self.ech_coups_possibles=self.ech.coups_jouables(ca)
+            self.ech_coups_possibles=coups_jouables(self.ech.pieces,ca)
+            self.ech_coups_possibles=elimine_coups_provoquant_echec(liste_coups=self.ech_coups_possibles, couleur_attaquant=couleur_attaquant)
+            # breakpoint()
             v = 'Bloqué' if self.ech_coups_possibles=={} else 'Select'
             self.ech.pieces[ca+'c']=Piece(couleur="cursor", valeur=v, type=False) # fichier image = valeur_couleur
             v='Possible'
