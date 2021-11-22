@@ -47,6 +47,7 @@ class Plateau(Tk):
         if cur!='': # on a clické sur un cursor
             self.ech.pieces=self.ech_coups_possibles[ca]
             self.ech.cleanCursor()
+            # self.ech.check_échec()    TODO !!
             self.image = self.ech.trace().resize((self.width, self.height))
             self.photo = ImageTk.PhotoImage(self.image)
             self.canvas.create_image((0, 0), anchor="nw", image=self.photo)

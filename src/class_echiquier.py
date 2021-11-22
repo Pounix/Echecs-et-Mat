@@ -2,7 +2,7 @@
 from sys import _current_frames
 from PIL import Image
 from class_piece import Piece
-from moves import newCase
+from moves import newCase, attaquable_par
 from settings import COULEUR, VALEUR, PLATEAU_JPG
 
 class Echiquier:
@@ -64,4 +64,12 @@ class Echiquier:
         return ''.join(chr(64 + int(min(max((x - 60) * 8 / 680 + 1, 1), 8)))+chr(57 - int(min(max((y - 60) * 8 / 680 + 1, 1), 8))))
 
 
-        
+    def check_échec(self):
+        """ ajoute les marques de mies en échec ( Cursor_échec) éventuelles
+        """
+        pie=self.pieces.copy()
+        for p in pie.keys():
+            if pie[p].valeur==0 and attaquable_par(pie,p,1-pie[p].couleur): # c'est un Roi, est-il en échec
+                self.pieces[p+'e'].valeur=6
+                self.pieces[p+'e'].couleur=5
+        return 

@@ -21,5 +21,5 @@ VALEUR=(
 
 # pour construire le nom du fichier PNG associé à chaque pièce
 NOM_PNG_VAL=('Roi','Dame','Fou','Cavalier','Tour','Pion','Cursor')
-NOM_PNG_COU=('blanc','noir','bloqué','select','possible')
+NOM_PNG_COU=('blanc','noir','bloqué','select','possible','échec')
 PLATEAU_JPG = "images\\échiquier.jpg"
