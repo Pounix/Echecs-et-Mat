@@ -3,7 +3,7 @@ from sys import _current_frames
 from PIL import Image
 from class_piece import Piece
 from moves import newCase
-
+from settings import COULEUR, VALEUR, PLATEAU_JPG
 
 class Echiquier:
     def __init__(self,pieces={}):
@@ -20,29 +20,29 @@ class Echiquier:
         """Creates a new game
         """
         self.pieces ={}
-        lig = self._position_initiale(couleur='blanc',ligne='1')
-        lig = self._position_initiale(couleur='noir',ligne='8')
+        self._position_initiale(couleur=0,ligne='1')
+        self._position_initiale(couleur=1,ligne='8')
         return self.pieces
 
     def _position_initiale(self, couleur,ligne):
         # maintenant on place les pieces principales
-        posinit=[('Roi','E'),('Dame','D'),('Fou','C'),('Cavalier','B'),('Tour','A'),('Fou','F'),('Cavalier','G'),('Tour','H')]
+        posinit=[(0,'E'),(1,'D'),(2,'C'),(3,'B'),(4,'A'),(2,'F'),(3,'G'),(4,'H')]
         for p in posinit:
-            self.pieces[p[1]+ligne]=Piece(couleur=couleur,valeur=p[0],type=True,case_précédente=p[1]+ligne)
+            self.pieces[p[1]+ligne]=Piece(couleur=couleur,valeur=p[0],case_précédente=p[1]+ligne,case_coup_précédent=p[1]+ligne)
 
         # maintenant on place les pions
         ligne = '2' if ligne=='1' else '7'
         for c in "ABCDEFGH":
-            self.pieces[c+ligne]=Piece(couleur=couleur,valeur='Pion',type=True,case_précédente=c+ligne)
+            self.pieces[c+ligne]=Piece(couleur=couleur,valeur=5,case_précédente=c+ligne,case_coup_précédent=c+ligne)
         return
 
     def trace(self):
         """Trace le plateau de jeu
 
         Returns:
-            image]: plateau avec ses pièces et ses éventuels curseurs
+            image: plateau avec ses pièces et ses éventuels curseurs
         """
-        PLATEAU = Image.open("images\\échiquier.jpg")
+        PLATEAU=Image.open(PLATEAU_JPG)
         image_new = Image.new("RGB", (PLATEAU.width, PLATEAU.height))
         image_new.paste(PLATEAU, (0, 0))
         for p in self.pieces.keys():
@@ -56,8 +56,7 @@ class Echiquier:
 
     def cleanCursor(self):
         """Ne conserve que les pièces de l'échiquier (retire les cursors)"""
-        # l = {p.key: p.value for p in self.pieces if p.value.type}
-        l = {p: self.pieces[p] for p in self.pieces if self.pieces[p].type}
+        l = {p: self.pieces[p] for p in self.pieces if self.pieces[p].valeur<6}
         self.pieces = l
         return
 

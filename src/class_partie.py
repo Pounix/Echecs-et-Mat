@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from class_echiquier import Echiquier
-
+import src.settings
 
 class Partie:
     def __init__(self, echiquier=Echiquier('blanc'), liste_de_coups=[]):

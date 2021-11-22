@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from tkinter.constants import FALSE
-
+from settings import COULEUR, VALEUR
 
 def newCase(case:str,dir_nord:int,dir_ouest:int):
     """ retourne la case = case+direction 
@@ -34,17 +34,17 @@ def coups_jouables(pieces, case_départ: str):
     except KeyError:
         return liste_coups
 
-    if valeur=='Roi':
+    if valeur==0:
         liste_coups = mouvements_possibles_roi(pieces,case_départ)
-    elif valeur=='Dame':
+    elif valeur==1:
         liste_coups = mouvements_possibles_dame(pieces,case_départ)    
-    elif valeur=='Tour':
-        liste_coups = mouvements_possibles_tour(pieces,case_départ) 
-    elif valeur=='Fou':
+    elif valeur==2:
         liste_coups = mouvements_possibles_fou(pieces,case_départ) 
-    elif valeur=='Cavalier':
+    elif valeur==3:
         liste_coups = mouvements_possibles_cavalier(pieces,case_départ) 
-    elif valeur=='Pion':
+    elif valeur==4:
+        liste_coups = mouvements_possibles_tour(pieces,case_départ) 
+    elif valeur==5:
         liste_coups = mouvements_possibles_pion(pieces,case_départ)
         
     # TODO possibilité de 'prise en passant' d'un pion
@@ -71,45 +71,70 @@ def mouvements_possibles_roi(pieces, case_départ: str):
             ):
                 #la case est libre on peut jouer
                 coups_possibles[case_arrivée]= déplace_une_piece(pieces, case_départ=case_départ,case_arrivée=case_arrivée)
-    flg=False
+    
+    # test les ROQUES
     if pieces[case_départ].case_précédente==case_départ:   # c'est bon le roi n'a jamais bougé !            
-        # test petit ROQUE
-        color = 'noir' if pieces[case_départ].couleur=='blanc' else 'blanc'
-        delta_lig=0
-        pos_tour = 'H1' if pieces[case_départ].couleur=='blanc' else 'H8'
-        if pos_tour in pieces.keys() and pieces[pos_tour].case_précédente==pos_tour:   # Il y a une tour et elle n'a pas bougé non plus !
-            flg=True
-            for delta_col in (1,2):
-                case_arrivée=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=delta_col)
-                if case_arrivée in pieces.keys():
-                    flg=False
-                    break
-                elif attaquable_par(pieces=pieces,case=case_arrivée,couleur_attaquant=color):
-                    flg=False
-                    break
-            if flg:
-                new_pos_roi=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=2)
-                new_pos_tour=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=1)
-                cp=déplace_une_piece(pieces, case_départ=pos_tour,case_arrivée=new_pos_tour)
-                coups_possibles[new_pos_roi]=déplace_une_piece(cp, case_départ=case_départ,case_arrivée=new_pos_roi)
-        # test grand ROQUE
-        pos_tour = 'A1' if pieces[case_départ].couleur=='blanc' else 'A8'
-        if pos_tour in pieces.keys() and pieces[pos_tour].case_précédente==pos_tour:   # Il y a une tour et elle n'a pas bougé non plus !
-            flg=True
-            for delta_col in (1,3):
-                case_arrivée=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=-delta_col)
-                if case_arrivée in pieces.keys():
-                    flg=False
-                    break
-                elif attaquable_par(pieces=pieces,case=case_arrivée,couleur_attaquant=color):
-                    flg=False
-                    break
-            if flg:
-                new_pos_roi=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=-2)
-                new_pos_tour=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=-1)
-                cp=déplace_une_piece(pieces, case_départ=pos_tour,case_arrivée=new_pos_tour)
-                coups_possibles[new_pos_roi]=déplace_une_piece(cp, case_départ=case_départ,case_arrivée=new_pos_roi)
-                
+        color = pieces[case_départ].couleur
+        ligne = '1' if color==0 else '8'
+        for colonne in ['A','H']:
+            scan=(1,2) if colonne=='H' else (-1,-2,-3)
+            move=1 if colonne=='H' else -1
+            flg=False
+            pos_tour=colonne+ligne
+            if pos_tour in pieces.keys() and pieces[pos_tour].case_précédente==pos_tour:   # Il y a bien une tour et elle n'a pas bougé non plus !
+                flg=True
+                for delta_col in scan:
+                    case_arrivée=newCase(case=case_départ,dir_nord=0,dir_ouest=delta_col)
+                    if case_arrivée in pieces.keys():
+                        flg=False
+                        break
+                    elif attaquable_par(pieces=pieces,case=case_arrivée,couleur_attaquant=1-color):
+                        flg=False
+                        break
+                if flg:
+                    new_pos_roi=newCase(case=case_départ,dir_nord=0,dir_ouest=2*move)
+                    new_pos_tour=newCase(case=case_départ,dir_nord=0,dir_ouest=move)
+                    cp=déplace_une_piece(pieces, case_départ=pos_tour,case_arrivée=new_pos_tour)
+                    coups_possibles[new_pos_roi]=déplace_une_piece(cp, case_départ=case_départ,case_arrivée=new_pos_roi)
+
+    # flg=False
+    # if pieces[case_départ].case_précédente==case_départ:   # c'est bon le roi n'a jamais bougé !            
+    #     # test petit ROQUE
+    #     color = 1-pieces[case_départ].couleur
+    #     delta_lig=0
+    #     pos_tour = 'H1' if pieces[case_départ].couleur==0 else 'H8'
+    #     if pos_tour in pieces.keys() and pieces[pos_tour].case_précédente==pos_tour:   # Il y a une tour et elle n'a pas bougé non plus !
+    #         flg=True
+    #         for delta_col in (1,2):
+    #             case_arrivée=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=delta_col)
+    #             if case_arrivée in pieces.keys():
+    #                 flg=False
+    #                 break
+    #             elif attaquable_par(pieces=pieces,case=case_arrivée,couleur_attaquant=color):
+    #                 flg=False
+    #                 break
+    #         if flg:
+    #             new_pos_roi=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=2)
+    #             new_pos_tour=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=1)
+    #             cp=déplace_une_piece(pieces, case_départ=pos_tour,case_arrivée=new_pos_tour)
+    #             coups_possibles[new_pos_roi]=déplace_une_piece(cp, case_départ=case_départ,case_arrivée=new_pos_roi)
+    #     # test grand ROQUE
+    #     pos_tour = 'A1' if pieces[case_départ].couleur==0 else 'A8'
+    #     if pos_tour in pieces.keys() and pieces[pos_tour].case_précédente==pos_tour:   # Il y a une tour et elle n'a pas bougé non plus !
+    #         flg=True
+    #         for delta_col in (1,3):
+    #             case_arrivée=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=-delta_col)
+    #             if case_arrivée in pieces.keys():
+    #                 flg=False
+    #                 break
+    #             elif attaquable_par(pieces=pieces,case=case_arrivée,couleur_attaquant=color):
+    #                 flg=False
+    #                 break
+    #         if flg:
+    #             new_pos_roi=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=-2)
+    #             new_pos_tour=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=-1)
+    #             cp=déplace_une_piece(pieces, case_départ=pos_tour,case_arrivée=new_pos_tour)
+    #             coups_possibles[new_pos_roi]=déplace_une_piece(cp, case_départ=case_départ,case_arrivée=new_pos_roi)                
     return coups_possibles
 
 def mouvements_possibles_cavalier(pieces, case_départ: str):
@@ -264,7 +289,7 @@ def mouvements_possibles_pion(pieces, case_départ: str):
     """
     coups_possibles={}
     # mouvement pion classique de 1 selon couleur du pion
-    delta_lig =1 if pieces[case_départ].couleur=='blanc'else -1
+    delta_lig =1 if pieces[case_départ].couleur==0 else -1
     delta_col=0
     case_arrivée=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=delta_col)
     if case_arrivée not in pieces.keys():
@@ -273,7 +298,7 @@ def mouvements_possibles_pion(pieces, case_départ: str):
 
         # mouvement pion 2 cases à l'ouverture uniquement
         if case_départ==pieces[case_départ].case_précédente:   # donc si le pion n'a pas encore bougé
-            delta_lig =2 if pieces[case_départ].couleur=='blanc'else -2
+            delta_lig =2 if pieces[case_départ].couleur==0 else -2
             delta_col=0
             case_arrivée=newCase(case_départ,dir_nord=delta_lig,dir_ouest=delta_col)
             if case_arrivée not in pieces.keys():
@@ -281,7 +306,7 @@ def mouvements_possibles_pion(pieces, case_départ: str):
                 coups_possibles[case_arrivée]= déplace_une_piece(pieces, case_départ=case_départ,case_arrivée=case_arrivée)  
 
     # mouvement pion pour la prise d'une pièce
-    delta_lig =1 if pieces[case_départ].couleur=='blanc'else -1
+    delta_lig =1 if pieces[case_départ].couleur==0 else -1
     for delta_col in (-1,1):
         case_arrivée=newCase(case=case_départ,dir_nord=delta_lig,dir_ouest=delta_col)
         if (
@@ -303,9 +328,12 @@ def déplace_une_piece(pieces, case_départ: str, case_arrivée: str):
         new_pieces (dict): le dictionnaire des pièces après ce coup
     """
     
-    new_pieces=pieces.copy()                            
+    new_pieces=pieces.copy()
+    for p in new_pieces.keys():
+        new_pieces[p].case_coup_précédent=p
     new_pieces[case_arrivée]=pieces[case_départ]
     new_pieces[case_arrivée].case_précédente=case_départ
+    new_pieces[case_arrivée].case_coup_précédent=case_départ
     del new_pieces[case_départ]
     return new_pieces
 
@@ -315,12 +343,12 @@ def attaquable_par(pieces,case,couleur_attaquant):
     Args:
         pieces (dict): dictionnaire {case, piece}
         case (str): case du genre 'A2'
-        couleur (str): 'blanc' ou 'noir'
+        couleur (int): 0 ou 1
 
     Returns:
         bool : True = case est attaquable par couleur   False = il ne l'est pas, pardi !
     """
-    print('Analyse attaque', case,'par', couleur_attaquant,': Jeu =', pieces.keys())
+    print('Analyse attaque', case,'par', COULEUR[couleur_attaquant][0],': Jeu =', pieces.keys())
     attaque=False
     for key in pieces:
         piece=pieces[key]
@@ -359,7 +387,7 @@ def elimine_coups_provoquant_echec(liste_coups, couleur_attaquant):
         pieces=lc[key]
         for key2 in pieces:
             piece=pieces[key2]
-            if piece.couleur!=couleur_attaquant and piece.valeur=='Roi':
+            if piece.couleur!=couleur_attaquant and piece.valeur==0:
                 position_du_roi=key2
                 flg=True        # on a trouvé le Roi !!!
                 break
