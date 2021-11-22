@@ -67,9 +67,7 @@ class Echiquier:
     def check_échec(self):
         """ ajoute les marques de mies en échec ( Cursor_échec) éventuelles
         """
-        pie=self.pieces.copy()
-        for p in pie.keys():
-            if pie[p].valeur==0 and attaquable_par(pie,p,1-pie[p].couleur): # c'est un Roi, est-il en échec
-                self.pieces[p+'e'].valeur=6
-                self.pieces[p+'e'].couleur=5
-        return 
+        for p in self.pieces.keys():
+            if self.pieces[p].valeur==0 and attaquable_par(self.pieces,p,1-self.pieces[p].couleur): # c'est un Roi, est-il en échec
+                return p
+        return ''

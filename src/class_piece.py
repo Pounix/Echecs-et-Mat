@@ -33,5 +33,4 @@ class Piece:
     def fichier(self):
         """Returns the file name of the picture of one piece"""
         return f"images\\{NOM_PNG_VAL[self.valeur]}_{NOM_PNG_COU[self.couleur]}.png"
-
     
